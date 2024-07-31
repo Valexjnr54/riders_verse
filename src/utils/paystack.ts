@@ -7,7 +7,7 @@ const PAYSTACK_SECRET_KEY = Config.paystackSecret;
 const PAYSTACK_BASE_URL = Config.paystackBaseURL
 
 
-export async function initializePayment(package_name:string, phone_number:string, user_id:number,pickup_location:string,delivery_location:string,delivery_code:number, price: number, imageUrl: string, landmark:string, callback_url: string, email:string, vendor_id:string) {
+export async function initializePayment(package_name:string, phone_number:string, user_id:number,pickup_location:string,delivery_location:string, delivery_code:number, price: number, imageUrl: string, landmark:string, callback_url: string, email:string, vendor_id:string) {
   try {
     const response = await axios.post(
       PAYSTACK_BASE_URL + '/initialize',
