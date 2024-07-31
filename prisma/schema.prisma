@@ -25,18 +25,19 @@ model Admin {
 }
 
 model User {
-  id            Int            @id @default(autoincrement())
-  fullname      String
-  username      String         @unique
-  email         String         @unique
-  phone_number  String         @unique
-  role          Role           @default(User)
-  profile_image String
-  password      String
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  delivery      Delivery[]
-  rider_rating  Rider_rating[]
+  id               Int                @id @default(autoincrement())
+  fullname         String
+  username         String             @unique
+  email            String             @unique
+  phone_number     String             @unique
+  role             Role               @default(User)
+  profile_image    String
+  password         String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  delivery         Delivery[]
+  rider_rating     Rider_rating[]
+  delivery_payment delivery_payment[]
 }
 
 model Vendor {
@@ -89,7 +90,7 @@ model Delivery {
   estimated_delivery_price String
   package_image            String
   landmark                 String
-  reference       String   @unique
+  reference                String     @unique
   rider                    Rider?     @relation(fields: [rider_id], references: [id], onDelete: Cascade)
   rider_id                 Int?
   delivery_code            Int?       @unique
@@ -103,16 +104,17 @@ model Delivery {
 }
 
 model delivery_payment {
-  id              Int      @id @default(autoincrement())
-  user_id        String
-  email           String
-  amount          String
-  reference       String   @unique
-  phone_number    String
-  status          String
-  has_paid        Boolean  @default(false)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id           Int      @id @default(autoincrement())
+  user         User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id      Int
+  email        String
+  amount       String
+  reference    String   @unique
+  phone_number String
+  status       String
+  has_paid     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model Proposal {

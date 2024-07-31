@@ -1777,11 +1777,13 @@ export namespace Prisma {
   export type UserCountOutputType = {
     delivery: number
     rider_rating: number
+    delivery_payment: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     delivery?: boolean | UserCountOutputTypeCountDeliveryArgs
     rider_rating?: boolean | UserCountOutputTypeCountRider_ratingArgs
+    delivery_payment?: boolean | UserCountOutputTypeCountDelivery_paymentArgs
   }
 
   // Custom InputTypes
@@ -1807,6 +1809,13 @@ export namespace Prisma {
    */
   export type UserCountOutputTypeCountRider_ratingArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: Rider_ratingWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountDelivery_paymentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: delivery_paymentWhereInput
   }
 
 
@@ -3143,6 +3152,7 @@ export namespace Prisma {
     updatedAt?: boolean
     delivery?: boolean | User$deliveryArgs<ExtArgs>
     rider_rating?: boolean | User$rider_ratingArgs<ExtArgs>
+    delivery_payment?: boolean | User$delivery_paymentArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -3175,6 +3185,7 @@ export namespace Prisma {
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     delivery?: boolean | User$deliveryArgs<ExtArgs>
     rider_rating?: boolean | User$rider_ratingArgs<ExtArgs>
+    delivery_payment?: boolean | User$delivery_paymentArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -3184,6 +3195,7 @@ export namespace Prisma {
     objects: {
       delivery: Prisma.$DeliveryPayload<ExtArgs>[]
       rider_rating: Prisma.$Rider_ratingPayload<ExtArgs>[]
+      delivery_payment: Prisma.$delivery_paymentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: number
@@ -3562,6 +3574,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     delivery<T extends User$deliveryArgs<ExtArgs> = {}>(args?: Subset<T, User$deliveryArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DeliveryPayload<ExtArgs>, T, "findMany"> | Null>
     rider_rating<T extends User$rider_ratingArgs<ExtArgs> = {}>(args?: Subset<T, User$rider_ratingArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$Rider_ratingPayload<ExtArgs>, T, "findMany"> | Null>
+    delivery_payment<T extends User$delivery_paymentArgs<ExtArgs> = {}>(args?: Subset<T, User$delivery_paymentArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$delivery_paymentPayload<ExtArgs>, T, "findMany"> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3952,6 +3965,26 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: Rider_ratingScalarFieldEnum | Rider_ratingScalarFieldEnum[]
+  }
+
+  /**
+   * User.delivery_payment
+   */
+  export type User$delivery_paymentArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the delivery_payment
+     */
+    select?: delivery_paymentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: delivery_paymentInclude<ExtArgs> | null
+    where?: delivery_paymentWhereInput
+    orderBy?: delivery_paymentOrderByWithRelationInput | delivery_paymentOrderByWithRelationInput[]
+    cursor?: delivery_paymentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: Delivery_paymentScalarFieldEnum | Delivery_paymentScalarFieldEnum[]
   }
 
   /**
@@ -7428,15 +7461,17 @@ export namespace Prisma {
 
   export type Delivery_paymentAvgAggregateOutputType = {
     id: number | null
+    user_id: number | null
   }
 
   export type Delivery_paymentSumAggregateOutputType = {
     id: number | null
+    user_id: number | null
   }
 
   export type Delivery_paymentMinAggregateOutputType = {
     id: number | null
-    user_id: string | null
+    user_id: number | null
     email: string | null
     amount: string | null
     reference: string | null
@@ -7449,7 +7484,7 @@ export namespace Prisma {
 
   export type Delivery_paymentMaxAggregateOutputType = {
     id: number | null
-    user_id: string | null
+    user_id: number | null
     email: string | null
     amount: string | null
     reference: string | null
@@ -7477,10 +7512,12 @@ export namespace Prisma {
 
   export type Delivery_paymentAvgAggregateInputType = {
     id?: true
+    user_id?: true
   }
 
   export type Delivery_paymentSumAggregateInputType = {
     id?: true
+    user_id?: true
   }
 
   export type Delivery_paymentMinAggregateInputType = {
@@ -7611,7 +7648,7 @@ export namespace Prisma {
 
   export type Delivery_paymentGroupByOutputType = {
     id: number
-    user_id: string
+    user_id: number
     email: string
     amount: string
     reference: string
@@ -7652,6 +7689,7 @@ export namespace Prisma {
     has_paid?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["delivery_payment"]>
 
   export type delivery_paymentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -7665,6 +7703,7 @@ export namespace Prisma {
     has_paid?: boolean
     createdAt?: boolean
     updatedAt?: boolean
+    user?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["delivery_payment"]>
 
   export type delivery_paymentSelectScalar = {
@@ -7680,13 +7719,21 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
+  export type delivery_paymentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type delivery_paymentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    user?: boolean | UserDefaultArgs<ExtArgs>
+  }
 
   export type $delivery_paymentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "delivery_payment"
-    objects: {}
+    objects: {
+      user: Prisma.$UserPayload<ExtArgs>
+    }
     scalars: $Extensions.GetPayloadResult<{
       id: number
-      user_id: string
+      user_id: number
       email: string
       amount: string
       reference: string
@@ -8059,6 +8106,7 @@ export namespace Prisma {
    */
   export interface Prisma__delivery_paymentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    user<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow"> | Null, Null, ExtArgs>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8089,7 +8137,7 @@ export namespace Prisma {
    */ 
   interface delivery_paymentFieldRefs {
     readonly id: FieldRef<"delivery_payment", 'Int'>
-    readonly user_id: FieldRef<"delivery_payment", 'String'>
+    readonly user_id: FieldRef<"delivery_payment", 'Int'>
     readonly email: FieldRef<"delivery_payment", 'String'>
     readonly amount: FieldRef<"delivery_payment", 'String'>
     readonly reference: FieldRef<"delivery_payment", 'String'>
@@ -8111,6 +8159,10 @@ export namespace Prisma {
      */
     select?: delivery_paymentSelect<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: delivery_paymentInclude<ExtArgs> | null
+    /**
      * Filter, which delivery_payment to fetch.
      */
     where: delivery_paymentWhereUniqueInput
@@ -8125,6 +8177,10 @@ export namespace Prisma {
      */
     select?: delivery_paymentSelect<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: delivery_paymentInclude<ExtArgs> | null
+    /**
      * Filter, which delivery_payment to fetch.
      */
     where: delivery_paymentWhereUniqueInput
@@ -8138,6 +8194,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the delivery_payment
      */
     select?: delivery_paymentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: delivery_paymentInclude<ExtArgs> | null
     /**
      * Filter, which delivery_payment to fetch.
      */
@@ -8183,6 +8243,10 @@ export namespace Prisma {
      */
     select?: delivery_paymentSelect<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: delivery_paymentInclude<ExtArgs> | null
+    /**
      * Filter, which delivery_payment to fetch.
      */
     where?: delivery_paymentWhereInput
@@ -8227,6 +8291,10 @@ export namespace Prisma {
      */
     select?: delivery_paymentSelect<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: delivery_paymentInclude<ExtArgs> | null
+    /**
      * Filter, which delivery_payments to fetch.
      */
     where?: delivery_paymentWhereInput
@@ -8266,6 +8334,10 @@ export namespace Prisma {
      */
     select?: delivery_paymentSelect<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: delivery_paymentInclude<ExtArgs> | null
+    /**
      * The data needed to create a delivery_payment.
      */
     data: XOR<delivery_paymentCreateInput, delivery_paymentUncheckedCreateInput>
@@ -8295,6 +8367,10 @@ export namespace Prisma {
      */
     data: delivery_paymentCreateManyInput | delivery_paymentCreateManyInput[]
     skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: delivery_paymentIncludeCreateManyAndReturn<ExtArgs> | null
   }
 
   /**
@@ -8305,6 +8381,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the delivery_payment
      */
     select?: delivery_paymentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: delivery_paymentInclude<ExtArgs> | null
     /**
      * The data needed to update a delivery_payment.
      */
@@ -8338,6 +8418,10 @@ export namespace Prisma {
      */
     select?: delivery_paymentSelect<ExtArgs> | null
     /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: delivery_paymentInclude<ExtArgs> | null
+    /**
      * The filter to search for the delivery_payment to update in case it exists.
      */
     where: delivery_paymentWhereUniqueInput
@@ -8359,6 +8443,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the delivery_payment
      */
     select?: delivery_paymentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: delivery_paymentInclude<ExtArgs> | null
     /**
      * Filter which delivery_payment to delete.
      */
@@ -8383,6 +8471,10 @@ export namespace Prisma {
      * Select specific fields to fetch from the delivery_payment
      */
     select?: delivery_paymentSelect<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: delivery_paymentInclude<ExtArgs> | null
   }
 
 
@@ -13738,6 +13830,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"User"> | Date | string
     delivery?: DeliveryListRelationFilter
     rider_rating?: Rider_ratingListRelationFilter
+    delivery_payment?: Delivery_paymentListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -13753,6 +13846,7 @@ export namespace Prisma {
     updatedAt?: SortOrder
     delivery?: DeliveryOrderByRelationAggregateInput
     rider_rating?: Rider_ratingOrderByRelationAggregateInput
+    delivery_payment?: delivery_paymentOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -13771,6 +13865,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"User"> | Date | string
     delivery?: DeliveryListRelationFilter
     rider_rating?: Rider_ratingListRelationFilter
+    delivery_payment?: Delivery_paymentListRelationFilter
   }, "id" | "username" | "email" | "phone_number">
 
   export type UserOrderByWithAggregationInput = {
@@ -14149,7 +14244,7 @@ export namespace Prisma {
     OR?: delivery_paymentWhereInput[]
     NOT?: delivery_paymentWhereInput | delivery_paymentWhereInput[]
     id?: IntFilter<"delivery_payment"> | number
-    user_id?: StringFilter<"delivery_payment"> | string
+    user_id?: IntFilter<"delivery_payment"> | number
     email?: StringFilter<"delivery_payment"> | string
     amount?: StringFilter<"delivery_payment"> | string
     reference?: StringFilter<"delivery_payment"> | string
@@ -14158,6 +14253,7 @@ export namespace Prisma {
     has_paid?: BoolFilter<"delivery_payment"> | boolean
     createdAt?: DateTimeFilter<"delivery_payment"> | Date | string
     updatedAt?: DateTimeFilter<"delivery_payment"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
   }
 
   export type delivery_paymentOrderByWithRelationInput = {
@@ -14171,6 +14267,7 @@ export namespace Prisma {
     has_paid?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
+    user?: UserOrderByWithRelationInput
   }
 
   export type delivery_paymentWhereUniqueInput = Prisma.AtLeast<{
@@ -14179,7 +14276,7 @@ export namespace Prisma {
     AND?: delivery_paymentWhereInput | delivery_paymentWhereInput[]
     OR?: delivery_paymentWhereInput[]
     NOT?: delivery_paymentWhereInput | delivery_paymentWhereInput[]
-    user_id?: StringFilter<"delivery_payment"> | string
+    user_id?: IntFilter<"delivery_payment"> | number
     email?: StringFilter<"delivery_payment"> | string
     amount?: StringFilter<"delivery_payment"> | string
     phone_number?: StringFilter<"delivery_payment"> | string
@@ -14187,6 +14284,7 @@ export namespace Prisma {
     has_paid?: BoolFilter<"delivery_payment"> | boolean
     createdAt?: DateTimeFilter<"delivery_payment"> | Date | string
     updatedAt?: DateTimeFilter<"delivery_payment"> | Date | string
+    user?: XOR<UserRelationFilter, UserWhereInput>
   }, "id" | "reference">
 
   export type delivery_paymentOrderByWithAggregationInput = {
@@ -14212,7 +14310,7 @@ export namespace Prisma {
     OR?: delivery_paymentScalarWhereWithAggregatesInput[]
     NOT?: delivery_paymentScalarWhereWithAggregatesInput | delivery_paymentScalarWhereWithAggregatesInput[]
     id?: IntWithAggregatesFilter<"delivery_payment"> | number
-    user_id?: StringWithAggregatesFilter<"delivery_payment"> | string
+    user_id?: IntWithAggregatesFilter<"delivery_payment"> | number
     email?: StringWithAggregatesFilter<"delivery_payment"> | string
     amount?: StringWithAggregatesFilter<"delivery_payment"> | string
     reference?: StringWithAggregatesFilter<"delivery_payment"> | string
@@ -14649,6 +14747,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     delivery?: DeliveryCreateNestedManyWithoutUserInput
     rider_rating?: Rider_ratingCreateNestedManyWithoutUserInput
+    delivery_payment?: delivery_paymentCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -14664,6 +14763,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     delivery?: DeliveryUncheckedCreateNestedManyWithoutUserInput
     rider_rating?: Rider_ratingUncheckedCreateNestedManyWithoutUserInput
+    delivery_payment?: delivery_paymentUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserUpdateInput = {
@@ -14678,6 +14778,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     delivery?: DeliveryUpdateManyWithoutUserNestedInput
     rider_rating?: Rider_ratingUpdateManyWithoutUserNestedInput
+    delivery_payment?: delivery_paymentUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -14693,6 +14794,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     delivery?: DeliveryUncheckedUpdateManyWithoutUserNestedInput
     rider_rating?: Rider_ratingUncheckedUpdateManyWithoutUserNestedInput
+    delivery_payment?: delivery_paymentUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -15121,7 +15223,6 @@ export namespace Prisma {
   }
 
   export type delivery_paymentCreateInput = {
-    user_id: string
     email: string
     amount: string
     reference: string
@@ -15130,11 +15231,12 @@ export namespace Prisma {
     has_paid?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
+    user: UserCreateNestedOneWithoutDelivery_paymentInput
   }
 
   export type delivery_paymentUncheckedCreateInput = {
     id?: number
-    user_id: string
+    user_id: number
     email: string
     amount: string
     reference: string
@@ -15146,7 +15248,6 @@ export namespace Prisma {
   }
 
   export type delivery_paymentUpdateInput = {
-    user_id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     amount?: StringFieldUpdateOperationsInput | string
     reference?: StringFieldUpdateOperationsInput | string
@@ -15155,11 +15256,12 @@ export namespace Prisma {
     has_paid?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    user?: UserUpdateOneRequiredWithoutDelivery_paymentNestedInput
   }
 
   export type delivery_paymentUncheckedUpdateInput = {
     id?: IntFieldUpdateOperationsInput | number
-    user_id?: StringFieldUpdateOperationsInput | string
+    user_id?: IntFieldUpdateOperationsInput | number
     email?: StringFieldUpdateOperationsInput | string
     amount?: StringFieldUpdateOperationsInput | string
     reference?: StringFieldUpdateOperationsInput | string
@@ -15172,7 +15274,7 @@ export namespace Prisma {
 
   export type delivery_paymentCreateManyInput = {
     id?: number
-    user_id: string
+    user_id: number
     email: string
     amount: string
     reference: string
@@ -15184,7 +15286,6 @@ export namespace Prisma {
   }
 
   export type delivery_paymentUpdateManyMutationInput = {
-    user_id?: StringFieldUpdateOperationsInput | string
     email?: StringFieldUpdateOperationsInput | string
     amount?: StringFieldUpdateOperationsInput | string
     reference?: StringFieldUpdateOperationsInput | string
@@ -15197,7 +15298,7 @@ export namespace Prisma {
 
   export type delivery_paymentUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
-    user_id?: StringFieldUpdateOperationsInput | string
+    user_id?: IntFieldUpdateOperationsInput | number
     email?: StringFieldUpdateOperationsInput | string
     amount?: StringFieldUpdateOperationsInput | string
     reference?: StringFieldUpdateOperationsInput | string
@@ -15688,11 +15789,21 @@ export namespace Prisma {
     none?: Rider_ratingWhereInput
   }
 
+  export type Delivery_paymentListRelationFilter = {
+    every?: delivery_paymentWhereInput
+    some?: delivery_paymentWhereInput
+    none?: delivery_paymentWhereInput
+  }
+
   export type DeliveryOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
   export type Rider_ratingOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type delivery_paymentOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -16138,6 +16249,7 @@ export namespace Prisma {
 
   export type delivery_paymentAvgOrderByAggregateInput = {
     id?: SortOrder
+    user_id?: SortOrder
   }
 
   export type delivery_paymentMaxOrderByAggregateInput = {
@@ -16168,6 +16280,7 @@ export namespace Prisma {
 
   export type delivery_paymentSumOrderByAggregateInput = {
     id?: SortOrder
+    user_id?: SortOrder
   }
 
   export type RiderRelationFilter = {
@@ -16448,6 +16561,13 @@ export namespace Prisma {
     connect?: Rider_ratingWhereUniqueInput | Rider_ratingWhereUniqueInput[]
   }
 
+  export type delivery_paymentCreateNestedManyWithoutUserInput = {
+    create?: XOR<delivery_paymentCreateWithoutUserInput, delivery_paymentUncheckedCreateWithoutUserInput> | delivery_paymentCreateWithoutUserInput[] | delivery_paymentUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: delivery_paymentCreateOrConnectWithoutUserInput | delivery_paymentCreateOrConnectWithoutUserInput[]
+    createMany?: delivery_paymentCreateManyUserInputEnvelope
+    connect?: delivery_paymentWhereUniqueInput | delivery_paymentWhereUniqueInput[]
+  }
+
   export type DeliveryUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<DeliveryCreateWithoutUserInput, DeliveryUncheckedCreateWithoutUserInput> | DeliveryCreateWithoutUserInput[] | DeliveryUncheckedCreateWithoutUserInput[]
     connectOrCreate?: DeliveryCreateOrConnectWithoutUserInput | DeliveryCreateOrConnectWithoutUserInput[]
@@ -16460,6 +16580,13 @@ export namespace Prisma {
     connectOrCreate?: Rider_ratingCreateOrConnectWithoutUserInput | Rider_ratingCreateOrConnectWithoutUserInput[]
     createMany?: Rider_ratingCreateManyUserInputEnvelope
     connect?: Rider_ratingWhereUniqueInput | Rider_ratingWhereUniqueInput[]
+  }
+
+  export type delivery_paymentUncheckedCreateNestedManyWithoutUserInput = {
+    create?: XOR<delivery_paymentCreateWithoutUserInput, delivery_paymentUncheckedCreateWithoutUserInput> | delivery_paymentCreateWithoutUserInput[] | delivery_paymentUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: delivery_paymentCreateOrConnectWithoutUserInput | delivery_paymentCreateOrConnectWithoutUserInput[]
+    createMany?: delivery_paymentCreateManyUserInputEnvelope
+    connect?: delivery_paymentWhereUniqueInput | delivery_paymentWhereUniqueInput[]
   }
 
   export type DeliveryUpdateManyWithoutUserNestedInput = {
@@ -16490,6 +16617,20 @@ export namespace Prisma {
     deleteMany?: Rider_ratingScalarWhereInput | Rider_ratingScalarWhereInput[]
   }
 
+  export type delivery_paymentUpdateManyWithoutUserNestedInput = {
+    create?: XOR<delivery_paymentCreateWithoutUserInput, delivery_paymentUncheckedCreateWithoutUserInput> | delivery_paymentCreateWithoutUserInput[] | delivery_paymentUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: delivery_paymentCreateOrConnectWithoutUserInput | delivery_paymentCreateOrConnectWithoutUserInput[]
+    upsert?: delivery_paymentUpsertWithWhereUniqueWithoutUserInput | delivery_paymentUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: delivery_paymentCreateManyUserInputEnvelope
+    set?: delivery_paymentWhereUniqueInput | delivery_paymentWhereUniqueInput[]
+    disconnect?: delivery_paymentWhereUniqueInput | delivery_paymentWhereUniqueInput[]
+    delete?: delivery_paymentWhereUniqueInput | delivery_paymentWhereUniqueInput[]
+    connect?: delivery_paymentWhereUniqueInput | delivery_paymentWhereUniqueInput[]
+    update?: delivery_paymentUpdateWithWhereUniqueWithoutUserInput | delivery_paymentUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: delivery_paymentUpdateManyWithWhereWithoutUserInput | delivery_paymentUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: delivery_paymentScalarWhereInput | delivery_paymentScalarWhereInput[]
+  }
+
   export type DeliveryUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<DeliveryCreateWithoutUserInput, DeliveryUncheckedCreateWithoutUserInput> | DeliveryCreateWithoutUserInput[] | DeliveryUncheckedCreateWithoutUserInput[]
     connectOrCreate?: DeliveryCreateOrConnectWithoutUserInput | DeliveryCreateOrConnectWithoutUserInput[]
@@ -16516,6 +16657,20 @@ export namespace Prisma {
     update?: Rider_ratingUpdateWithWhereUniqueWithoutUserInput | Rider_ratingUpdateWithWhereUniqueWithoutUserInput[]
     updateMany?: Rider_ratingUpdateManyWithWhereWithoutUserInput | Rider_ratingUpdateManyWithWhereWithoutUserInput[]
     deleteMany?: Rider_ratingScalarWhereInput | Rider_ratingScalarWhereInput[]
+  }
+
+  export type delivery_paymentUncheckedUpdateManyWithoutUserNestedInput = {
+    create?: XOR<delivery_paymentCreateWithoutUserInput, delivery_paymentUncheckedCreateWithoutUserInput> | delivery_paymentCreateWithoutUserInput[] | delivery_paymentUncheckedCreateWithoutUserInput[]
+    connectOrCreate?: delivery_paymentCreateOrConnectWithoutUserInput | delivery_paymentCreateOrConnectWithoutUserInput[]
+    upsert?: delivery_paymentUpsertWithWhereUniqueWithoutUserInput | delivery_paymentUpsertWithWhereUniqueWithoutUserInput[]
+    createMany?: delivery_paymentCreateManyUserInputEnvelope
+    set?: delivery_paymentWhereUniqueInput | delivery_paymentWhereUniqueInput[]
+    disconnect?: delivery_paymentWhereUniqueInput | delivery_paymentWhereUniqueInput[]
+    delete?: delivery_paymentWhereUniqueInput | delivery_paymentWhereUniqueInput[]
+    connect?: delivery_paymentWhereUniqueInput | delivery_paymentWhereUniqueInput[]
+    update?: delivery_paymentUpdateWithWhereUniqueWithoutUserInput | delivery_paymentUpdateWithWhereUniqueWithoutUserInput[]
+    updateMany?: delivery_paymentUpdateManyWithWhereWithoutUserInput | delivery_paymentUpdateManyWithWhereWithoutUserInput[]
+    deleteMany?: delivery_paymentScalarWhereInput | delivery_paymentScalarWhereInput[]
   }
 
   export type RiderCreateNestedManyWithoutVendorInput = {
@@ -16878,6 +17033,20 @@ export namespace Prisma {
     update?: ProposalUpdateWithWhereUniqueWithoutDeliverInput | ProposalUpdateWithWhereUniqueWithoutDeliverInput[]
     updateMany?: ProposalUpdateManyWithWhereWithoutDeliverInput | ProposalUpdateManyWithWhereWithoutDeliverInput[]
     deleteMany?: ProposalScalarWhereInput | ProposalScalarWhereInput[]
+  }
+
+  export type UserCreateNestedOneWithoutDelivery_paymentInput = {
+    create?: XOR<UserCreateWithoutDelivery_paymentInput, UserUncheckedCreateWithoutDelivery_paymentInput>
+    connectOrCreate?: UserCreateOrConnectWithoutDelivery_paymentInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserUpdateOneRequiredWithoutDelivery_paymentNestedInput = {
+    create?: XOR<UserCreateWithoutDelivery_paymentInput, UserUncheckedCreateWithoutDelivery_paymentInput>
+    connectOrCreate?: UserCreateOrConnectWithoutDelivery_paymentInput
+    upsert?: UserUpsertWithoutDelivery_paymentInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutDelivery_paymentInput, UserUpdateWithoutDelivery_paymentInput>, UserUncheckedUpdateWithoutDelivery_paymentInput>
   }
 
   export type RiderCreateNestedOneWithoutProposalInput = {
@@ -17294,6 +17463,39 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type delivery_paymentCreateWithoutUserInput = {
+    email: string
+    amount: string
+    reference: string
+    phone_number: string
+    status: string
+    has_paid?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type delivery_paymentUncheckedCreateWithoutUserInput = {
+    id?: number
+    email: string
+    amount: string
+    reference: string
+    phone_number: string
+    status: string
+    has_paid?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type delivery_paymentCreateOrConnectWithoutUserInput = {
+    where: delivery_paymentWhereUniqueInput
+    create: XOR<delivery_paymentCreateWithoutUserInput, delivery_paymentUncheckedCreateWithoutUserInput>
+  }
+
+  export type delivery_paymentCreateManyUserInputEnvelope = {
+    data: delivery_paymentCreateManyUserInput | delivery_paymentCreateManyUserInput[]
+    skipDuplicates?: boolean
+  }
+
   export type DeliveryUpsertWithWhereUniqueWithoutUserInput = {
     where: DeliveryWhereUniqueInput
     update: XOR<DeliveryUpdateWithoutUserInput, DeliveryUncheckedUpdateWithoutUserInput>
@@ -17361,6 +17563,38 @@ export namespace Prisma {
     review?: StringFilter<"Rider_rating"> | string
     createdAt?: DateTimeFilter<"Rider_rating"> | Date | string
     updatedAt?: DateTimeFilter<"Rider_rating"> | Date | string
+  }
+
+  export type delivery_paymentUpsertWithWhereUniqueWithoutUserInput = {
+    where: delivery_paymentWhereUniqueInput
+    update: XOR<delivery_paymentUpdateWithoutUserInput, delivery_paymentUncheckedUpdateWithoutUserInput>
+    create: XOR<delivery_paymentCreateWithoutUserInput, delivery_paymentUncheckedCreateWithoutUserInput>
+  }
+
+  export type delivery_paymentUpdateWithWhereUniqueWithoutUserInput = {
+    where: delivery_paymentWhereUniqueInput
+    data: XOR<delivery_paymentUpdateWithoutUserInput, delivery_paymentUncheckedUpdateWithoutUserInput>
+  }
+
+  export type delivery_paymentUpdateManyWithWhereWithoutUserInput = {
+    where: delivery_paymentScalarWhereInput
+    data: XOR<delivery_paymentUpdateManyMutationInput, delivery_paymentUncheckedUpdateManyWithoutUserInput>
+  }
+
+  export type delivery_paymentScalarWhereInput = {
+    AND?: delivery_paymentScalarWhereInput | delivery_paymentScalarWhereInput[]
+    OR?: delivery_paymentScalarWhereInput[]
+    NOT?: delivery_paymentScalarWhereInput | delivery_paymentScalarWhereInput[]
+    id?: IntFilter<"delivery_payment"> | number
+    user_id?: IntFilter<"delivery_payment"> | number
+    email?: StringFilter<"delivery_payment"> | string
+    amount?: StringFilter<"delivery_payment"> | string
+    reference?: StringFilter<"delivery_payment"> | string
+    phone_number?: StringFilter<"delivery_payment"> | string
+    status?: StringFilter<"delivery_payment"> | string
+    has_paid?: BoolFilter<"delivery_payment"> | boolean
+    createdAt?: DateTimeFilter<"delivery_payment"> | Date | string
+    updatedAt?: DateTimeFilter<"delivery_payment"> | Date | string
   }
 
   export type RiderCreateWithoutVendorInput = {
@@ -17815,6 +18049,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     rider_rating?: Rider_ratingCreateNestedManyWithoutUserInput
+    delivery_payment?: delivery_paymentCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutDeliveryInput = {
@@ -17829,6 +18064,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     rider_rating?: Rider_ratingUncheckedCreateNestedManyWithoutUserInput
+    delivery_payment?: delivery_paymentUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutDeliveryInput = {
@@ -17927,6 +18163,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     rider_rating?: Rider_ratingUpdateManyWithoutUserNestedInput
+    delivery_payment?: delivery_paymentUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutDeliveryInput = {
@@ -17941,6 +18178,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     rider_rating?: Rider_ratingUncheckedUpdateManyWithoutUserNestedInput
+    delivery_payment?: delivery_paymentUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type RiderUpsertWithoutDeliveryInput = {
@@ -18011,6 +18249,80 @@ export namespace Prisma {
   export type ProposalUpdateManyWithWhereWithoutDeliverInput = {
     where: ProposalScalarWhereInput
     data: XOR<ProposalUpdateManyMutationInput, ProposalUncheckedUpdateManyWithoutDeliverInput>
+  }
+
+  export type UserCreateWithoutDelivery_paymentInput = {
+    fullname: string
+    username: string
+    email: string
+    phone_number: string
+    role?: $Enums.Role
+    profile_image: string
+    password: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    delivery?: DeliveryCreateNestedManyWithoutUserInput
+    rider_rating?: Rider_ratingCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutDelivery_paymentInput = {
+    id?: number
+    fullname: string
+    username: string
+    email: string
+    phone_number: string
+    role?: $Enums.Role
+    profile_image: string
+    password: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    delivery?: DeliveryUncheckedCreateNestedManyWithoutUserInput
+    rider_rating?: Rider_ratingUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutDelivery_paymentInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutDelivery_paymentInput, UserUncheckedCreateWithoutDelivery_paymentInput>
+  }
+
+  export type UserUpsertWithoutDelivery_paymentInput = {
+    update: XOR<UserUpdateWithoutDelivery_paymentInput, UserUncheckedUpdateWithoutDelivery_paymentInput>
+    create: XOR<UserCreateWithoutDelivery_paymentInput, UserUncheckedCreateWithoutDelivery_paymentInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutDelivery_paymentInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutDelivery_paymentInput, UserUncheckedUpdateWithoutDelivery_paymentInput>
+  }
+
+  export type UserUpdateWithoutDelivery_paymentInput = {
+    fullname?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone_number?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    profile_image?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    delivery?: DeliveryUpdateManyWithoutUserNestedInput
+    rider_rating?: Rider_ratingUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutDelivery_paymentInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    fullname?: StringFieldUpdateOperationsInput | string
+    username?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    phone_number?: StringFieldUpdateOperationsInput | string
+    role?: EnumRoleFieldUpdateOperationsInput | $Enums.Role
+    profile_image?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    delivery?: DeliveryUncheckedUpdateManyWithoutUserNestedInput
+    rider_rating?: Rider_ratingUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type RiderCreateWithoutProposalInput = {
@@ -18374,6 +18686,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     delivery?: DeliveryCreateNestedManyWithoutUserInput
+    delivery_payment?: delivery_paymentCreateNestedManyWithoutUserInput
   }
 
   export type UserUncheckedCreateWithoutRider_ratingInput = {
@@ -18388,6 +18701,7 @@ export namespace Prisma {
     createdAt?: Date | string
     updatedAt?: Date | string
     delivery?: DeliveryUncheckedCreateNestedManyWithoutUserInput
+    delivery_payment?: delivery_paymentUncheckedCreateNestedManyWithoutUserInput
   }
 
   export type UserCreateOrConnectWithoutRider_ratingInput = {
@@ -18471,6 +18785,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     delivery?: DeliveryUpdateManyWithoutUserNestedInput
+    delivery_payment?: delivery_paymentUpdateManyWithoutUserNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRider_ratingInput = {
@@ -18485,6 +18800,7 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     delivery?: DeliveryUncheckedUpdateManyWithoutUserNestedInput
+    delivery_payment?: delivery_paymentUncheckedUpdateManyWithoutUserNestedInput
   }
 
   export type RiderCreateWithoutRider_credentialsInput = {
@@ -18618,6 +18934,18 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type delivery_paymentCreateManyUserInput = {
+    id?: number
+    email: string
+    amount: string
+    reference: string
+    phone_number: string
+    status: string
+    has_paid?: boolean
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type DeliveryUpdateWithoutUserInput = {
     package_name?: StringFieldUpdateOperationsInput | string
     phone_number?: StringFieldUpdateOperationsInput | string
@@ -18701,6 +19029,41 @@ export namespace Prisma {
     rider_id?: IntFieldUpdateOperationsInput | number
     rating?: IntFieldUpdateOperationsInput | number
     review?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type delivery_paymentUpdateWithoutUserInput = {
+    email?: StringFieldUpdateOperationsInput | string
+    amount?: StringFieldUpdateOperationsInput | string
+    reference?: StringFieldUpdateOperationsInput | string
+    phone_number?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    has_paid?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type delivery_paymentUncheckedUpdateWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    email?: StringFieldUpdateOperationsInput | string
+    amount?: StringFieldUpdateOperationsInput | string
+    reference?: StringFieldUpdateOperationsInput | string
+    phone_number?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    has_paid?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type delivery_paymentUncheckedUpdateManyWithoutUserInput = {
+    id?: IntFieldUpdateOperationsInput | number
+    email?: StringFieldUpdateOperationsInput | string
+    amount?: StringFieldUpdateOperationsInput | string
+    reference?: StringFieldUpdateOperationsInput | string
+    phone_number?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    has_paid?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

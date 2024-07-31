@@ -125,7 +125,7 @@ export async function verifyPaymentHandler(request: Request, response: Response)
     const email = paymentDetails.metadata.email;
     const paidamount = paymentDetails.metadata.amount;
     const phone_number = paymentDetails.metadata.phone_number;
-    const user_id = paymentDetails.metadata.user_id;
+    const user_id = parseInt(paymentDetails.metadata.user_id);
     const pickup_location = paymentDetails.metadata.pickup_location;
     const delivery_location = paymentDetails.metadata.delivery_location;
     const delivery_code = paymentDetails.metadata.delivery_code;

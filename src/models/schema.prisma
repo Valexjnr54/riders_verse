@@ -25,18 +25,19 @@ model Admin {
 }
 
 model User {
-  id            Int            @id @default(autoincrement())
-  fullname      String
-  username      String         @unique
-  email         String         @unique
-  phone_number  String         @unique
-  role          Role           @default(User)
-  profile_image String
-  password      String
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  delivery      Delivery[]
-  rider_rating  Rider_rating[]
+  id               Int                @id @default(autoincrement())
+  fullname         String
+  username         String             @unique
+  email            String             @unique
+  phone_number     String             @unique
+  role             Role               @default(User)
+  profile_image    String
+  password         String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  delivery         Delivery[]
+  rider_rating     Rider_rating[]
+  delivery_payment delivery_payment[]
 }
 
 model Vendor {
@@ -104,7 +105,8 @@ model Delivery {
 
 model delivery_payment {
   id           Int      @id @default(autoincrement())
-  user_id      String
+  user         User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id      Int
   email        String
   amount       String
   reference    String   @unique
