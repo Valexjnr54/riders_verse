@@ -11,4 +11,4 @@ riderProfileRouter.get('/profile', authenticateJWT, profile);
 riderProfileRouter.put('/update-profile', authenticateJWT, updateRider);
 riderProfileRouter.put('/change-profile-image', authenticateJWT, upload.single('profile_image'), changeProfileImage);
 riderProfileRouter.put('/change-password', authenticateJWT, changePassword);
-riderProfileRouter.post('/complete-setup', authenticateJWT, riderCredentials, completeSetup);
+riderProfileRouter.post('/complete-setup', authenticateJWT, completeSetup);
