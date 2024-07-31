@@ -205,14 +205,11 @@ export async function changePassword(request: Request, response: Response) {
 
 export async function completeSetup(request: Request, response: Response) {
   // Extract data from the request
-  const { bank_name, account_name, account_number, nin, driver_license, plate_number } = request.body;
+  const { bank_name, account_name, account_number } = request.body;
   const riderId = request.user.riderId;
 
   try {
     const validationRules = [
-      body('nin').notEmpty().withMessage('NIN Number is required'),
-      body('driver_license').notEmpty().withMessage('Driver License is required'),
-      body('plate_number').notEmpty().withMessage('Plate Number is required'),
       body('bank_name').notEmpty().withMessage('Bank Name is required'),
       body('account_name').notEmpty().withMessage('Account Name is required'),
       body('account_number').notEmpty().isLength({ min: 10 }).withMessage('Account number is required and must be at least 10 characters long'),
@@ -237,69 +234,7 @@ export async function completeSetup(request: Request, response: Response) {
       return response.status(400).json({message: 'Bank Details Already Exist'})
     }
 
-    const existingNin = await prisma.rider_credentials.findFirst({ where: {nin:nin}})
-    if (existingNin) {
-      return response.status(400).json({message: 'NIN Already Exist'})
-    }
-
-    const existingDriverLicence = await prisma.rider_credentials.findFirst({ where: {driver_license:driver_license}})
-    if (existingDriverLicence) {
-      return response.status(400).json({message: 'Driver Licence Already Exist'})
-    }
-
-    const existingPlateNumber = await prisma.rider_credentials.findFirst({ where: {plate_number:plate_number}})
-    if (existingPlateNumber) {
-      return response.status(400).json({message: 'Plate Number Already Exist'})
-    }
-
     try {
-      if (!request.files || !('nin_image' in request.files) || !('driver_license_image' in request.files) || !('vehicle_image' in request.files)) {
-        return response.status(400).json({ message: 'Please provide all required images.' });
-      }
-      // Upload NIN image to Cloudinary
-      const ninImageUrl = await uploadImage(request.files['nin_image'][0].path, 'rider_app/images/nin_images');
-      fs.unlink(request.files['nin_image'][0].path, (err) => {
-        if (err) {
-          console.error(`Error deleting NIN file`);
-        } else {
-          console.log(`NIN File deleted`);
-        }
-      });
-
-      // Upload Driver License image to Cloudinary
-      const driverLicenseImageUrl = await uploadImage(request.files['driver_license_image'][0].path,'rider_app/images/driver_license_images');
-      fs.unlink(request.files['driver_license_image'][0].path, (err) => {
-        if (err) {
-          console.error(`Error deleting driver license file`);
-        } else {
-          console.log(`Driver License File deleted`);
-        }
-      });
-
-      // Upload Vehicle image to Cloudinary
-      const vehicleImageUrl = await uploadImage(request.files['vehicle_image'][0].path, 'rider_app/images/vehicle_images');
-      fs.unlink(request.files['vehicle_image'][0].path, (err) => {
-        if (err) {
-          console.error(`Error deleting vehicle Image file`);
-        } else {
-          console.log(`Vehicle Image File deleted`);
-        }
-      });
-
-      // Save data to the database using Prisma
-      const credentials = await prisma.rider_credentials.create({
-          data: {
-            rider_id: riderId,
-            nin,
-            nin_image: ninImageUrl,
-            driver_license,
-            driver_license_image: driverLicenseImageUrl,
-            plate_number,
-            vehicle_image: vehicleImageUrl,
-            status: 'Pending', // Adjust as needed
-          },
-        });
-
         const newDetail = await prisma.bank_details.create({
           data:{
             rider_id: riderId,
@@ -341,7 +276,7 @@ export async function completeSetup(request: Request, response: Response) {
         console.log("SMS Undefined")
       }
 
-        return response.status(200).json({ message: 'Rider account details created', bank_detail: newDetail, credentials });
+        return response.status(200).json({ message: 'Rider account details created', bank_detail: newDetail });
     } catch (error) {
       console.error('Error completing setup:', error);
       return response.status(500).json({ message: 'Internal Server Error' });
