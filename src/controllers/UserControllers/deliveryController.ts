@@ -86,7 +86,7 @@ export async function createDeliveryRequest(request: Request,response: Response)
         .json({ message: "Callback Can't be undefined" });
     }
 
-    price*100
+    const amount = price * 100
 
     const paymentInfo = await initializePayment(
       package_name,
@@ -95,7 +95,7 @@ export async function createDeliveryRequest(request: Request,response: Response)
       pickup_location,
       delivery_location,
       delivery_code,
-      price,
+      amount,
       imageUrl,
       landmark,
       callback_url,
@@ -110,10 +110,8 @@ export async function createDeliveryRequest(request: Request,response: Response)
   }
 }
 
-export async function verifyPaymentHandler(
-  request: Request,
-  response: Response
-) {
+export async function verifyPaymentHandler(request: Request, response: Response) 
+{
   try {
     const reference = extractReferenceFromRequest(request);
     if (typeof reference !== "string") {
