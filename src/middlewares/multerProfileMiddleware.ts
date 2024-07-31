@@ -11,6 +11,7 @@ const storage = multer.diskStorage({
   export const upload = multer({ storage: storage });
 
   export const riderCredentials = upload.fields([
+    {name: 'profile_image', maxCount:1 },
     { name: 'nin_image', maxCount: 1 },
     { name: 'driver_license_image', maxCount: 1 },
     { name: 'vehicle_image', maxCount: 1 },

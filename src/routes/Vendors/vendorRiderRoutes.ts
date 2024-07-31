@@ -8,5 +8,5 @@ import { riderCredentials } from '../../middlewares/multerProfileMiddleware';
 export const vendorRiderRouter = express.Router();
 
 // Secure the logout route with authentication middleware
-vendorRiderRouter.post('/vendor-create-rider', authenticateJWT, upload.single('profile_image'), riderCredentials, registerRider);
+vendorRiderRouter.post('/vendor-create-rider', authenticateJWT, riderCredentials, registerRider);
 // export default authRouter;
