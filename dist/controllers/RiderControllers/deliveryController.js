@@ -51,7 +51,6 @@ async function viewAllDelivery(request, response) {
                         phone_number: true,
                         profile_image: true,
                         avg_rating: true,
-                        bank_details: true,
                     }
                 }
             },
@@ -116,7 +115,6 @@ async function viewSingleDelivery(request, response) {
                         phone_number: true,
                         profile_image: true,
                         avg_rating: true,
-                        bank_details: true,
                     }
                 }
             },

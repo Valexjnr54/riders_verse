@@ -8,7 +8,7 @@ import { setupApprovedSMS } from '../../utils/sendSMS';
 const prisma = new PrismaClient();
 
 export async function activateRider(request: Request, response: Response) {
-    const rider_id: number = parseInt(request.params.rider_id, 10)
+    const rider_id: number = parseInt(request.query.rider_id as string, 10)
     const admin_id = request.user.adminId;
 
   // Check if user_id is not present or undefined
@@ -55,6 +55,7 @@ export async function activateRider(request: Request, response: Response) {
     setupApprovedSMS(rider.phone_number,message)
     return response.status(200).json({ message: 'Rider Has been Activated', data: rider });
   } catch (error) {
+    console.log(error)
     return response.status(500).json({ message: error})
   }
 }

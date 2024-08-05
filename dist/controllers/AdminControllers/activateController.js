@@ -5,7 +5,7 @@ const models_1 = require("../../models");
 const sendSMS_1 = require("../../utils/sendSMS");
 const prisma = new models_1.PrismaClient();
 async function activateRider(request, response) {
-    const rider_id = parseInt(request.params.rider_id, 10);
+    const rider_id = parseInt(request.query.rider_id, 10);
     const admin_id = request.user.adminId;
     // Check if user_id is not present or undefined
     if (!admin_id) {
@@ -33,7 +33,6 @@ async function activateRider(request, response) {
                 email: true,
                 username: true,
                 phone_number: true,
-                operating_areas: true,
                 profile_image: true,
                 avg_rating: true,
                 role: true,
@@ -47,6 +46,7 @@ async function activateRider(request, response) {
         return response.status(200).json({ message: 'Rider Has been Activated', data: rider });
     }
     catch (error) {
+        console.log(error);
         return response.status(500).json({ message: error });
     }
 }

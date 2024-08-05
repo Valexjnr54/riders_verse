@@ -84,7 +84,6 @@ async function createProposal(request, response) {
                         phone_number: true,
                         profile_image: true,
                         avg_rating: true,
-                        bank_details: true,
                     }
                 }
             }
@@ -157,7 +156,6 @@ async function createProposal(request, response) {
                         phone_number: true,
                         profile_image: true,
                         avg_rating: true,
-                        bank_details: true,
                     }
                 }
             }
@@ -259,7 +257,6 @@ async function pendingProposal(request, response) {
                         phone_number: true,
                         profile_image: true,
                         avg_rating: true,
-                        bank_details: true,
                     }
                 }
             }
@@ -332,7 +329,6 @@ async function approvedProposal(request, response) {
                         phone_number: true,
                         profile_image: true,
                         avg_rating: true,
-                        bank_details: true,
                     }
                 }
             }
@@ -404,7 +400,6 @@ async function rejectedProposal(request, response) {
                         phone_number: true,
                         profile_image: true,
                         avg_rating: true,
-                        bank_details: true,
                     }
                 }
             }

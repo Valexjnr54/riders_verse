@@ -11,3 +11,4 @@ exports.router = express_1.default.Router();
 exports.router.get('/operating_areas', miscellaneousController_1.allOperatingArea);
 exports.router.get('/delivery-detail', miscellaneousController_1.deliveryCode);
 exports.router.get('/confirm-delivery', miscellaneousController_1.confirmDelivery);
+exports.router.get('/vendor-price', miscellaneousController_1.vendorPrice);

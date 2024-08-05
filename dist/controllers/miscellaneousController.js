@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.confirmDelivery = exports.deliveryCode = exports.allOperatingArea = void 0;
+exports.vendorPrice = exports.confirmDelivery = exports.deliveryCode = exports.allOperatingArea = void 0;
 const models_1 = require("../models");
 const prisma = new models_1.PrismaClient();
 async function allOperatingArea(request, response) {
@@ -65,7 +65,6 @@ async function deliveryCode(request, response) {
                         phone_number: true,
                         profile_image: true,
                         avg_rating: true,
-                        bank_details: true
                     }
                 }
             },
@@ -125,7 +124,6 @@ async function confirmDelivery(request, response) {
                         phone_number: true,
                         profile_image: true,
                         avg_rating: true,
-                        bank_details: true,
                     }
                 }
             },
@@ -140,3 +138,73 @@ async function confirmDelivery(request, response) {
     }
 }
 exports.confirmDelivery = confirmDelivery;
+// export async function vendorPrice(request:Request, response:Response) {
+//   try {
+//     const { landmark } = request.body;
+//     // Define types for better type safety
+//     type OperatingArea = { area: string; price: number };
+//     function isOperatingAreaArray(value: any): value is OperatingArea[] {
+//       return Array.isArray(value) && value.every(item => typeof item === 'object' && 'area' in item && 'price' in item);
+//     }
+//     // Fetch all vendors from the database
+//     const allVendors = await prisma.vendor.findMany({});
+//     return response.status(200).json({ data: allVendors})
+//     // Filter the vendors to match the landmark in the operating_area JSON field
+//     const vendors = allVendors.filter(matchingVendors => {
+//       // Use type guard to check if operating_area is an array of OperatingArea
+//       if (matchingVendors.operating_areas && isOperatingAreaArray(matchingVendors.operating_areas)) {
+//         return matchingVendors.operating_areas.some(areaObj => areaObj.area === landmark);
+//       }
+//       return false;
+//     });
+//     if(vendors.length <= 0){
+//         return response.status(404).json({ message: 'No Record Found'})
+//     }
+//     return response.status(200).json({ message: 'All Operating Areas', data: vendors });
+//   } catch (error) {
+//     return response.status(500).json({ message: error})
+//   }
+// }
+async function vendorPrice(request, response) {
+    try {
+        const { landmark } = request.query;
+        function isOperatingAreaArray(value) {
+            return Array.isArray(value) && value.every(item => typeof item === 'object' && 'area' in item && 'price' in item);
+        }
+        // Fetch all vendors from the database
+        const allVendors = await prisma.vendor.findMany({});
+        // Filter the vendors to match the landmark in the operating_area JSON field
+        const matchingVendors = allVendors.reduce((acc, vendor) => {
+            if (typeof vendor.operating_areas === 'string') {
+                try {
+                    // Parse the JSON string to an array of OperatingArea
+                    const operatingAreas = JSON.parse(vendor.operating_areas);
+                    // Use type guard to check if operatingAreas is an array of OperatingArea
+                    if (isOperatingAreaArray(operatingAreas)) {
+                        const matchedAreas = operatingAreas.filter(areaObj => areaObj.area === landmark);
+                        if (matchedAreas.length > 0) {
+                            acc.push({
+                                id: vendor.id,
+                                business_name: vendor.username,
+                                operating_areas: matchedAreas
+                            });
+                        }
+                    }
+                }
+                catch (error) {
+                    // Handle JSON parsing error
+                    console.error('Error parsing operating_areas JSON:', error);
+                }
+            }
+            return acc;
+        }, []);
+        if (matchingVendors.length <= 0) {
+            return response.status(404).json({ message: 'No Record Found' });
+        }
+        return response.status(200).json({ message: 'All Operating Areas', data: matchingVendors });
+    }
+    catch (error) {
+        return response.status(500).json({ message: error });
+    }
+}
+exports.vendorPrice = vendorPrice;

@@ -365,7 +365,7 @@ export async function viewAllDelivery(request: Request, response: Response) {
 
 export async function viewSingleDelivery(request: Request, response: Response) {
   const user_id = request.user.userId;
-  const id: number = parseInt(request.params.id, 10)
+  const id: number = parseInt(request.query.id as string, 10)
 
   // Check if user_id is not present or undefined
   if (!user_id) {
@@ -427,6 +427,7 @@ export async function viewSingleDelivery(request: Request, response: Response) {
     }
     return response.status(200).json({ data: singleDelivery });
   } catch (error) {
+    console.log(error)
     return response.status(500).json({ message: 'Internal Server Error' });
   }
 }
@@ -434,7 +435,7 @@ export async function viewSingleDelivery(request: Request, response: Response) {
 export async function updateDelivery(request:Request, response:Response) {
   const { package_name, phone_number, pickup_location, delivery_location, price } =request.body;
   const user_id = request.user.userId;
-  const id: number = parseInt(request.params.id, 10)
+  const id: number = parseInt(request.query.id as string, 10)
 
   // Check if user_id is not present or undefined
   if (!user_id) {
@@ -551,7 +552,7 @@ export async function updateDelivery(request:Request, response:Response) {
 
 export async function deleteDelivery(request:Request, response: Response) {
   const user_id = request.user.userId;
-  const id: number = parseInt(request.params.id, 10)
+  const id: number = parseInt(request.query.id as string, 10)
 
   // Check if user_id is not present or undefined
   if (!user_id) {

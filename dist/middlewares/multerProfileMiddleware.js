@@ -15,6 +15,7 @@ const storage = multer_1.default.diskStorage({
 });
 exports.upload = (0, multer_1.default)({ storage: storage });
 exports.riderCredentials = exports.upload.fields([
+    { name: 'profile_image', maxCount: 1 },
     { name: 'nin_image', maxCount: 1 },
     { name: 'driver_license_image', maxCount: 1 },
     { name: 'vehicle_image', maxCount: 1 },

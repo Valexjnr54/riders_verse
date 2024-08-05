@@ -3,16 +3,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.confirmDelivery = exports.deleteDelivery = exports.updateDelivery = exports.viewSingleDelivery = exports.viewAllDelivery = exports.createDeliveryRequest = void 0;
+exports.confirmDelivery = exports.deleteDelivery = exports.updateDelivery = exports.viewSingleDelivery = exports.viewAllDelivery = exports.verifyPaymentHandler = exports.createDeliveryRequest = void 0;
 const models_1 = require("../../models");
+const config_1 = require("../../config/config");
 const express_validator_1 = require("express-validator");
 const cloudinary_1 = __importDefault(require("../../utils/cloudinary"));
 const fs_1 = __importDefault(require("fs"));
 const emailSender_1 = require("../../utils/emailSender");
 const sendSMS_1 = require("../../utils/sendSMS");
+const paystack_1 = require("../../utils/paystack");
 const prisma = new models_1.PrismaClient();
 async function createDeliveryRequest(request, response) {
-    const { package_name, phone_number, pickup_location, delivery_location, price, landmark } = request.body;
+    const { package_name, phone_number, pickup_location, delivery_location, price, landmark, vendor_id } = request.body;
     const user_id = request.user.userId;
     // Check if user_id is not present or undefined
     if (!user_id) {
@@ -21,7 +23,11 @@ async function createDeliveryRequest(request, response) {
     try {
         // Retrieve the user by user_id
         const check_user = await prisma.user.findUnique({ where: { id: user_id } });
-        const role = check_user?.role;
+        if (!check_user) {
+            return response.status(404).json({ message: 'Not Found' });
+        }
+        const role = check_user.role;
+        const email = check_user.email;
         // Check if the role is not 'User'
         if (role !== 'User') {
             return response.status(403).json({ message: 'Unauthorized User' });
@@ -34,6 +40,7 @@ async function createDeliveryRequest(request, response) {
             (0, express_validator_1.body)('delivery_location').notEmpty().withMessage('Delivery Location is required'),
             (0, express_validator_1.body)('price').notEmpty().withMessage('Estimated Delivery Price is required'),
             (0, express_validator_1.body)('landmark').notEmpty().withMessage('Landmark is required'),
+            (0, express_validator_1.body)('vendor_id').notEmpty().withMessage('Vendor is required'),
         ];
         // Apply validation rules to the request
         await Promise.all(validationRules.map((rule) => rule.run(request)));
@@ -66,6 +73,102 @@ async function createDeliveryRequest(request, response) {
         const min = 100000;
         const max = 999999;
         const delivery_code = Math.floor(Math.random() * (max - min + 1)) + min;
+        const callback_url = config_1.Config.paystackDeliveryCallback;
+        if (!callback_url) {
+            return response
+                .status(400)
+                .json({ message: "Callback Can't be undefined" });
+        }
+        const amount = price * 100;
+        const paymentInfo = await (0, paystack_1.initializePayment)(package_name, phone_number, user_id, pickup_location, delivery_location, delivery_code, amount, imageUrl, landmark, callback_url, email, vendor_id);
+        return response.status(200).json({ data: paymentInfo });
+    }
+    catch (error) {
+        console.error(error);
+        return response.status(500).json({ message: 'Internal Server Error' });
+    }
+}
+exports.createDeliveryRequest = createDeliveryRequest;
+async function verifyPaymentHandler(request, response) {
+    try {
+        const reference = (0, paystack_1.extractReferenceFromRequest)(request);
+        if (typeof reference !== "string") {
+            throw new Error("Reference is not a string");
+        }
+        const paymentDetails = await (0, paystack_1.verifyPayment)(reference);
+        const paymentStatus = paymentDetails.status;
+        const paymentReference = paymentDetails.reference;
+        const package_name = paymentDetails.metadata.package_name;
+        const email = paymentDetails.metadata.email;
+        const paidamount = paymentDetails.metadata.amount;
+        const phone_number = paymentDetails.metadata.phone_number;
+        const user_id = parseInt(paymentDetails.metadata.user_id);
+        const pickup_location = paymentDetails.metadata.pickup_location;
+        const delivery_location = paymentDetails.metadata.delivery_location;
+        const delivery_code = parseInt(paymentDetails.metadata.delivery_code);
+        const package_image = paymentDetails.metadata.imageUrl;
+        const landmark = paymentDetails.metadata.landmark;
+        const vendor_id = parseInt(paymentDetails.metadata.vendor_id);
+        const price = (paidamount / 100).toString();
+        const delivery_payment = await prisma.delivery_payment.findUnique({
+            where: { reference },
+        });
+        const delivery_owner = await prisma.delivery.findUnique({
+            where: { reference, user_id },
+            select: {
+                id: true,
+                package_name: true,
+                phone_number: true,
+                pickup_location: true,
+                delivery_location: true,
+                estimated_delivery_price: true,
+                delivery_code: true,
+                landmark: true,
+                package_image: true,
+                is_delivered: true,
+                is_pickedup: true,
+                status: true,
+                sent_proposal_rider_id: true,
+                rider_id: true,
+                user: {
+                    select: {
+                        id: true,
+                        fullname: true,
+                        username: true,
+                        email: true,
+                        phone_number: true,
+                        profile_image: true,
+                    }
+                },
+                rider: {
+                    select: {
+                        id: true,
+                        fullname: true,
+                        username: true,
+                        email: true,
+                        phone_number: true,
+                        profile_image: true,
+                        avg_rating: true
+                    }
+                }
+            },
+        });
+        if (delivery_payment) {
+            return response
+                .status(200)
+                .json({ message: "Payment was Successful", data: delivery_owner, payment: delivery_payment });
+        }
+        const payment = await prisma.delivery_payment.create({
+            data: {
+                user_id,
+                email,
+                amount: price,
+                phone_number,
+                has_paid: true,
+                reference: paymentReference,
+                status: "Paid",
+            },
+        });
         // Create a new delivery entry in the database
         const newDelivery = await prisma.delivery.create({
             data: {
@@ -76,7 +179,8 @@ async function createDeliveryRequest(request, response) {
                 delivery_location,
                 delivery_code,
                 estimated_delivery_price: price,
-                package_image: imageUrl,
+                reference: paymentReference,
+                package_image,
                 landmark: landmark
             },
             select: {
@@ -112,18 +216,19 @@ async function createDeliveryRequest(request, response) {
                         email: true,
                         phone_number: true,
                         profile_image: true,
-                        avg_rating: true,
-                        bank_details: true,
+                        avg_rating: true
                     }
                 }
             },
         });
         const riders = await prisma.rider.findMany({
             where: {
-                operating_areas: {
-                    array_contains: landmark
-                }
-            }, select: {
+                vendor_id,
+                status: 'Active',
+                available: true,
+                is_verified: true,
+            },
+            select: {
                 id: true,
                 fullname: true,
                 username: true,
@@ -131,8 +236,14 @@ async function createDeliveryRequest(request, response) {
                 phone_number: true,
                 profile_image: true,
                 avg_rating: true,
+            },
+            orderBy: {
+                id: 'asc' // This line is optional, used for consistent ordering before picking a random rider
             }
         });
+        // Fetch a random rider from the filtered list
+        const rider = riders[Math.floor(Math.random() * riders.length)];
+        console.log(rider);
         const url = `${process.env.ROOT_URL}/rider/order/${newDelivery.id}`;
         const message = `Dear Rider, there's a new order waiting for you on Riderverse. A user in ${pickup_location} needs your expertise to deliver ${package_name} to ${delivery_location}.
 
@@ -140,18 +251,17 @@ async function createDeliveryRequest(request, response) {
 
     Powered by RiderVerse.net
     `;
-        riders.forEach(rider => {
-            (0, emailSender_1.sendDeliveryRequest)(rider.email, rider, newDelivery);
-            (0, sendSMS_1.createDeliverySMS)(rider.phone_number, message);
-        });
-        return response.status(200).json({ message: 'Delivery Request created', data: newDelivery });
+        (0, emailSender_1.sendDeliveryRequest)(rider.email, rider, newDelivery);
+        (0, sendSMS_1.createDeliverySMS)(rider.phone_number, message);
+        return response.status(200).json({ message: 'Payment was Successful and Delivery Request created', data: newDelivery, payment: payment });
+        // sendPersonnelReceiptEmail(email, paymentDetails, paymentReference);
     }
     catch (error) {
         console.error(error);
-        return response.status(500).json({ message: 'Internal Server Error' });
+        return response.status(500).json({ error: "Internal server error" });
     }
 }
-exports.createDeliveryRequest = createDeliveryRequest;
+exports.verifyPaymentHandler = verifyPaymentHandler;
 async function viewAllDelivery(request, response) {
     const user_id = request.user.userId;
     // Check if user_id is not present or undefined
@@ -200,8 +310,7 @@ async function viewAllDelivery(request, response) {
                         email: true,
                         phone_number: true,
                         profile_image: true,
-                        avg_rating: true,
-                        bank_details: true,
+                        avg_rating: true
                     }
                 }
             },
@@ -218,7 +327,7 @@ async function viewAllDelivery(request, response) {
 exports.viewAllDelivery = viewAllDelivery;
 async function viewSingleDelivery(request, response) {
     const user_id = request.user.userId;
-    const id = parseInt(request.params.id, 10);
+    const id = parseInt(request.query.id, 10);
     // Check if user_id is not present or undefined
     if (!user_id) {
         return response.status(403).json({ message: 'Unauthorized User' });
@@ -266,8 +375,7 @@ async function viewSingleDelivery(request, response) {
                         email: true,
                         phone_number: true,
                         profile_image: true,
-                        avg_rating: true,
-                        bank_details: true,
+                        avg_rating: true
                     }
                 }
             },
@@ -278,6 +386,7 @@ async function viewSingleDelivery(request, response) {
         return response.status(200).json({ data: singleDelivery });
     }
     catch (error) {
+        console.log(error);
         return response.status(500).json({ message: 'Internal Server Error' });
     }
 }
@@ -285,7 +394,7 @@ exports.viewSingleDelivery = viewSingleDelivery;
 async function updateDelivery(request, response) {
     const { package_name, phone_number, pickup_location, delivery_location, price } = request.body;
     const user_id = request.user.userId;
-    const id = parseInt(request.params.id, 10);
+    const id = parseInt(request.query.id, 10);
     // Check if user_id is not present or undefined
     if (!user_id) {
         return response.status(403).json({ message: 'Unauthorized User' });
@@ -377,7 +486,6 @@ async function updateDelivery(request, response) {
                         phone_number: true,
                         profile_image: true,
                         avg_rating: true,
-                        bank_details: true,
                     }
                 }
             },
@@ -395,7 +503,7 @@ async function updateDelivery(request, response) {
 exports.updateDelivery = updateDelivery;
 async function deleteDelivery(request, response) {
     const user_id = request.user.userId;
-    const id = parseInt(request.params.id, 10);
+    const id = parseInt(request.query.id, 10);
     // Check if user_id is not present or undefined
     if (!user_id) {
         return response.status(403).json({ message: 'Unauthorized User' });
@@ -489,11 +597,6 @@ async function confirmDelivery(request, response) {
                         profile_image: true,
                     }
                 }
-            }
-        });
-        const riderAccount = await prisma.bank_details.findFirst({
-            where: {
-                rider_id: rider_id,
             }
         });
         return response.status(200).json({ message: "Package Picked", data: updatePickup });

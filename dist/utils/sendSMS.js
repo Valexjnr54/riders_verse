@@ -13,7 +13,7 @@ async function sendWelcomeSMS(phoneNumber, message) {
             api_key: termiiApiKey,
             to: phoneNumber,
             sms: message,
-            from: "Dverse",
+            from: "N-Alert",
             type: "plain",
             channel: "generic"
         }, {
