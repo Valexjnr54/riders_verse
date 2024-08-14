@@ -172,8 +172,8 @@ table, td { color: #000000; } #u_body a { color: #0000ee; text-decoration: under
       <td style="overflow-wrap:break-word;word-break:break-word;padding:0px 10px 10px;font-family:arial,helvetica,sans-serif;" align="left">
         
   <div style="font-size: 14px; line-height: 140%; text-align: center; word-wrap: break-word;">
-    <p style="font-size: 14px; line-height: 140%;"><span style="font-family: Montserrat, sans-serif; font-size: 14px; line-height: 19.6px;">Hi <%= deliveryDetail.rider.fullname %>, <%= deliveryDetail.user.fullname %> has approved you to deliver his/her package.</span></p>
-<p style="font-size: 14px; line-height: 140%;"><span style="font-family: Montserrat, sans-serif; font-size: 14px; line-height: 19.6px;">Use The Information below for the delivery</span></p>
+    <p style="font-size: 14px; line-height: 140%;"><span style="font-family: Montserrat, sans-serif; font-size: 14px; line-height: 19.6px;">Hi <%= deliveryDetail.user.fullname %>, <%= deliveryDetail.rider.fullname %> has accepted to deliver your package.</span></p>
+<p style="font-size: 14px; line-height: 140%;"><span style="font-family: Montserrat, sans-serif; font-size: 14px; line-height: 19.6px;">Use The Information below for the delivery & Rider Information</span></p>
   </div>
 
       </td>
@@ -227,6 +227,21 @@ table, td { color: #000000; } #u_body a { color: #0000ee; text-decoration: under
     <p style="font-size: 14px; line-height: 140%;"><strong><span style="font-family: Montserrat, sans-serif; font-size: 14px; line-height: 19.6px;">Delivery Details</span></strong><br /><span style="font-family: Montserrat, sans-serif; font-size: 14px; line-height: 19.6px;">&nbsp;</span></p>
 <p style="font-size: 14px; line-height: 140%;"><span style="font-family: Montserrat, sans-serif; font-size: 14px; line-height: 19.6px;">Pickup Addess: <strong><%= deliveryDetail.pickup_location %></strong></span><br /><span style="font-family: Montserrat, sans-serif; font-size: 14px; line-height: 19.6px;">Delivery Address: <strong><%= deliveryDetail.delivery_location %></strong></span><br /><span style="font-family: Montserrat, sans-serif; font-size: 14px; line-height: 19.6px;">Contact Number on Pickup: <strong><%= deliveryDetail.user.phone_number %></strong></span></p>
 <p style="font-size: 14px; line-height: 140%;"><span style="font-family: Montserrat, sans-serif; font-size: 14px; line-height: 19.6px;">Contact Number on Delivery: <strong><%= deliveryDetail.phone_number %></strong></span></p>
+  </div>
+
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table style="font-family:arial,helvetica,sans-serif;" role="presentation" cellpadding="0" cellspacing="0" width="100%" border="0">
+  <tbody>
+    <tr>
+      <td style="overflow-wrap:break-word;word-break:break-word;padding:10px;font-family:arial,helvetica,sans-serif;" align="left">
+        
+  <div style="font-size: 14px; line-height: 140%; text-align: left; word-wrap: break-word;">
+    <p style="font-size: 14px; line-height: 140%;"><strong><span style="font-family: Montserrat, sans-serif; font-size: 14px; line-height: 19.6px;">Rider Details</span></strong><br /><span style="font-family: Montserrat, sans-serif; font-size: 14px; line-height: 19.6px;">&nbsp;</span></p>
+<p style="font-size: 14px; line-height: 140%;"><span style="font-family: Montserrat, sans-serif; font-size: 14px; line-height: 19.6px;">Rider Name: <strong><%= deliveryDetail.rider.fullname %></strong></span><br /><span style="font-family: Montserrat, sans-serif; font-size: 14px; line-height: 19.6px;">Contact Number: <strong><%= deliveryDetail.rider.phone_number %></strong></span><br /></p>
   </div>
 
       </td>

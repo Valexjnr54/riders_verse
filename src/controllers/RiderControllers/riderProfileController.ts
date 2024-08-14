@@ -287,3 +287,68 @@ export async function completeSetup(request: Request, response: Response) {
     return response.status(500).json({ message: 'Internal Server Error' });
   }
 }
+
+export async function updateAccountDetails(request:Request, response: Response) {
+  const { bank_name, account_name, account_number } = request.body;
+  const riderId = request.user.riderId;
+
+  try {
+    const validationRules = [
+      body('bank_name').notEmpty().withMessage('Full Name is required'),
+      body('account_name').notEmpty().withMessage('Full Name is required'),
+      body('account_number').isLength({ min: 10 }).withMessage('Account number must be at least 10 characters long'),
+    ];
+    
+    // Apply validation rules to the request
+    await Promise.all(validationRules.map(rule => rule.run(request)));
+    
+    const errors = validationResult(request);
+    if (!errors.isEmpty()) {
+      return response.status(400).json({ errors: errors.array() });
+    }
+
+    // Check if the email is already registered
+    const existingRider = await prisma.rider.findUnique({ where: { id:riderId } });
+    if (!existingRider) {
+      return response.status(404).json({ message: 'Rider not Found' });
+    }
+
+    const existingBankDetails = await prisma.bank_details.findUnique({ where: {rider_id:riderId}})
+    if (!existingBankDetails) {
+      return response.status(404).json({message: 'Bank Details not found'})
+    }
+
+    const updateDetail = await prisma.bank_details.update({
+      where:{
+        rider_id:riderId
+      },
+      data:{
+        bank_name,
+        account_name,
+        account_number
+      },
+      select:{
+        id:true,
+        rider_id:true,
+        bank_name:true,
+        account_name:true,
+        account_number:true,
+        rider:{
+          select:{
+            id:true,
+            fullname:true,
+            email:true,
+            username:true,
+            phone_number:true,
+            rider_credentials:true
+          }
+        }
+      }
+    })
+
+    return response.status(200).json({ message: 'Rider account details updated', data: updateDetail});
+  } catch (error) {
+    console.error(error);
+    return response.status(500).json({ message: 'Internal Server Error' });
+  }
+}

@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { PrismaClient } from '../../models';
 import { body, validationResult } from "express-validator";
 import { sendDeliveryCodeSMS, createDeliverySMS } from '../../utils/sendSMS';
-import { sendDeliveryRequest } from '../../utils/emailSender';
+import { sendApproval, sendDeliveryRequest } from '../../utils/emailSender';
 
 interface Coordinate {
   latitude: number;
@@ -290,6 +290,8 @@ export async function acceptDelivery(request:Request, response:Response) {
       if (updateDeliveryRecord) {
   
       // const url = `${process.env.ROOT_URL}/rider/order/${delivery_id}`
+
+      sendApproval(updateDeliveryRecord.user.email,updateDeliveryRecord)
   
       const message = `Dear ${updateDeliveryRecord.user.fullname}, a rider is on his way to pickup your package ${updateDeliveryRecord.package_name}. . Powered by RiderVerse.net`
 
