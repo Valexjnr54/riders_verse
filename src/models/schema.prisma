@@ -1,0 +1,206 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider      = "prisma-client-js"
+  output        = "../src/models"
+  binaryTargets = ["native", "debian-openssl-1.1.x"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id            Int      @id @default(autoincrement())
+  fullname      String
+  username      String   @unique
+  email         String   @unique
+  role          Role     @default(Admin)
+  profile_image String
+  password      String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model User {
+  id               Int                @id @default(autoincrement())
+  fullname         String
+  username         String             @unique
+  email            String             @unique
+  phone_number     String             @unique
+  role             Role               @default(User)
+  profile_image    String
+  password         String
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  delivery         Delivery[]
+  rider_rating     Rider_rating[]
+  delivery_payment delivery_payment[]
+}
+
+model Vendor {
+  id              Int            @id @default(autoincrement())
+  fullname        String
+  username        String         @unique
+  email           String         @unique
+  phone_number    String         @unique
+  role            Role           @default(Vendor)
+  operating_areas Json?
+  profile_image   String
+  password        String
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+  rider           Rider[]
+  delivery        Delivery[]
+  bank_details    Bank_details[]
+}
+
+model Rider {
+  id                Int                 @id @default(autoincrement())
+  vendor            Vendor              @relation(fields: [vendor_id], references: [id], onDelete: Cascade)
+  vendor_id         Int
+  fullname          String
+  username          String              @unique
+  email             String              @unique
+  phone_number      String              @unique
+  role              Role                @default(Rider)
+  profile_image     String
+  avg_rating        Float               @default(0)
+  password          String
+  status            Status              @default(Inactive)
+  is_verified       Boolean             @default(false)
+  available         Boolean             @default(false)
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  proposal          Proposal[]
+  rider_rating      Rider_rating[]
+  rider_credentials Rider_credentials[]
+}
+
+model Delivery {
+  id                       Int        @id @default(autoincrement())
+  user                     User       @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id                  Int
+  package_name             String
+  phone_number             String
+  pickup_location          String
+  delivery_location        String
+  estimated_delivery_price String
+  package_image            String
+  landmark                 String
+  reference                String     @unique
+  vendor                   Vendor?    @relation(fields: [vendor_id], references: [id], onDelete: Cascade)
+  vendor_id                Int?
+  delivery_code            Int?       @unique
+  is_pickedup              Boolean    @default(false)
+  is_delivered             Boolean    @default(false)
+  is_accepted              Boolean    @default(false)
+  status                   Status     @default(Available)
+  createdAt                DateTime   @default(now())
+  updatedAt                DateTime   @updatedAt
+  proposal                 Proposal[]
+  sent_proposal_rider_id   Json?
+}
+
+model nigerian_banks {
+  id           Int            @id @default(autoincrement())
+  name         String
+  code         String         @unique
+  is_active    Boolean        @default(true)
+  slug         String
+  ussd         String
+  created_at   DateTime       @default(now())
+  updated_at   DateTime       @updatedAt
+  bank_details Bank_details[]
+}
+
+model delivery_payment {
+  id           Int      @id @default(autoincrement())
+  user         User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id      Int
+  email        String
+  amount       String
+  reference    String   @unique
+  phone_number String
+  status       String
+  has_paid     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Proposal {
+  id          Int      @id @default(autoincrement())
+  rider       Rider    @relation(fields: [rider_id], references: [id], onDelete: Cascade)
+  rider_id    Int
+  deliver     Delivery @relation(fields: [delivery_id], references: [id])
+  delivery_id Int
+  status      Status   @default(Pending)
+}
+
+model Operating_areas {
+  id        Int      @id @default(autoincrement())
+  name      String
+  status    Status   @default(Available)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Bank_details {
+  id             Int             @id @default(autoincrement())
+  bank           nigerian_banks? @relation(fields: [bank_id], references: [id], onDelete: Cascade)
+  bank_id        Int?            @unique
+  vendor         Vendor?         @relation(fields: [vendor_id], references: [id], onDelete: Cascade)
+  vendor_id      Int?            @unique
+  bank_name      String
+  account_name   String
+  account_number String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+}
+
+model Rider_rating {
+  id        Int      @id @default(autoincrement())
+  rider     Rider    @relation(fields: [rider_id], references: [id], onDelete: Cascade)
+  rider_id  Int
+  user      User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id   Int
+  rating    Int
+  review    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Rider_credentials {
+  id                   Int      @id @default(autoincrement())
+  rider                Rider    @relation(fields: [rider_id], references: [id], onDelete: Cascade)
+  rider_id             Int
+  nin                  String   @unique
+  nin_image            String?
+  driver_license       String   @unique
+  driver_license_image String?
+  plate_number         String   @unique
+  vehicle_image        String?
+  status               Status   @default(Pending)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}
+
+enum Status {
+  Available
+  Pending
+  Delivered
+  Rejected
+  Approved
+  Inactive
+  Active
+  Suspend
+}
+
+enum Role {
+  User
+  Rider
+  Admin
+  Vendor
+}

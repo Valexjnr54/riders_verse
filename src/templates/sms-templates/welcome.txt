@@ -1,0 +1,6 @@
+Welcome,  {{fullname}}
+
+You're receiving this message because you recently signed up for a account with Riders App.
+Please Verify your email address.
+
+Confirm your email address by clicking the button below. This step adds extra security to your business by verifying you own this email.
